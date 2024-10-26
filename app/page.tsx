@@ -20,6 +20,7 @@ export default function Home() {
   const [modifiedRule, setModifiedRule] = useState("");
   const [selectedRules, setSelectedRules] = useState<RuleType[]>([]); // Store selected rules for combining
   const [tabValue, setTabValue] = useState(0); // Track the active tab
+  const [ast, setAst] = useState<{ [id: string]: any } | null>(null);
   const [formData, setFormData] = useState({
     age: 0,
     salary: 0,
@@ -61,6 +62,7 @@ export default function Home() {
     setSelectedRules([]);
     setSelectedRule("");
     setModifiedRule("");
+    setAst(null);
   };
 
   return (
@@ -88,6 +90,7 @@ export default function Home() {
                         setOpen(true);
                         setReload(!reload);
                         setMessage("Rule Added Successfully!");
+                        setAst(res.ast);
                         console.log("res: ", res);
                       } catch (e) {
                         setOpen(true);
@@ -110,6 +113,10 @@ export default function Home() {
                     </Button>
                   </form>
                 </FormControl>
+                <div>
+                  <div className=" my-4 font-semibold">Resulting AST Object</div>
+                  {ast && <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto">{JSON.stringify(ast, null, 2)}</pre>}
+                </div>
               </TabPanel>
               <TabPanel value={1}>
                 <FormControl size="lg">
@@ -128,6 +135,7 @@ export default function Home() {
                         setReload(!reload);
                         setMessage("Rule Modified Successfully!");
                         console.log("res: ", res);
+                        setAst(res.ast);
                       } catch (e) {
                         setOpen(true);
                         setMessage("Something went wrong! Please try again later.");
@@ -148,6 +156,10 @@ export default function Home() {
                     </Button>
                   </form>
                 </FormControl>
+                <div>
+                  <div className=" my-4 font-semibold">Resulting AST Object</div>
+                  {ast && <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto">{JSON.stringify(ast, null, 2)}</pre>}
+                </div>
               </TabPanel>
               <TabPanel value={2}>
                 <FormControl size="lg">
@@ -188,6 +200,7 @@ export default function Home() {
                         setMessage("Rules Combined Successfully!");
                         setSelectedRules([]);
                         console.log("res: ", res);
+                        setAst(res.combined_ast);
                       } catch (e) {
                         setOpen(true);
                         setMessage("Something went wrong! Please try again later.");
@@ -201,6 +214,10 @@ export default function Home() {
                     Combine Rules
                   </Button>
                 </FormControl>
+                <div>
+                  <div className=" my-4 font-semibold">Resulting AST Object</div>
+                  {ast && <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto">{JSON.stringify(ast, null, 2)}</pre>}
+                </div>
               </TabPanel>
               <TabPanel value={3}>
                 <form
@@ -215,8 +232,8 @@ export default function Home() {
                       const res = await evaluateRule(Number(selectedRule), formData);
                       setOpen(true);
                       setReload(!reload);
-                      setMessage(res.result?"TRUE":"FALSE");
-                      console.log("res: ", res)
+                      setMessage(res.result ? "TRUE" : "FALSE");
+                      console.log("res: ", res);
                     } catch (e) {
                       setOpen(true);
                       setMessage("Something went wrong! Please try again later.");
@@ -251,7 +268,7 @@ export default function Home() {
                       />
                     </FormControl>
                   </div>
-                  <Button  className="my-5" type="submit" size="lg">
+                  <Button className="my-5" type="submit" size="lg">
                     Evaluate
                   </Button>
                 </form>
